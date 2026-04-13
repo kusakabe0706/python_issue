@@ -26,13 +26,15 @@ jobs:
 
     # 4. メインプログラムの実行（動作確認）
     - name: Run main program
-      run: python issue14/main13.py
+      working-directory: ./issue14
+      run: python main13.py
 
     # 5. 単体テストの実行とカバレッジの計測
     # --cov-report=term で画面（ログ）に表示し、--cov-report=html でHTMLファイルを作成
     - name: Run tests with coverage
+      working-directory: ./issue14
       run: |
-        pytest --cov=issue14.func13 --cov-report=term issue14/test_func13.py
+        pytest --cov=func13 --cov-report=term --cov-report=html test_func13.py
 
     # 6. カバレッジのHTMLレポートをダウンロードできるように保存（Artifacts）
     - name: Upload coverage HTML report
