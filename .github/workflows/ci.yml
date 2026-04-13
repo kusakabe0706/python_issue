@@ -1,1 +1,42 @@
+name: Python CI
 
+# Pushされた時にこのワークフローを動かす
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest # 最新のUbuntu環境で実行
+
+    steps:
+    # 1. リポジトリのコードを仮想環境に持ってくる
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Pythonの環境をセットアップする
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # 使用するPythonのバージョンを指定
+
+    # 3. テストに必要なパッケージ（pytest, pytest-cov）をインストール
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+
+    # 4. メインプログラムの実行（動作確認）
+    - name: Run main program
+      run: python issue14/main13.py
+
+    # 5. 単体テストの実行とカバレッジの計測
+    # --cov-report=term で画面（ログ）に表示し、--cov-report=html でHTMLファイルを作成
+    - name: Run tests with coverage
+      run: |
+        pytest --cov=issue14.func13 --cov-report=term issue14/test_func13.py
+
+    # 6. カバレッジのHTMLレポートをダウンロードできるように保存（Artifacts）
+    - name: Upload coverage HTML report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: htmlcov/
